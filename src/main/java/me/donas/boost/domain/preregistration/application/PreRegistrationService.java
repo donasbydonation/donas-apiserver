@@ -17,11 +17,11 @@ public class PreRegistrationService {
 	private final PreRegistrationRepository registrationRepository;
 
 	@Transactional
-	public PreRegistration register(PreRegistrationRequest request) {
+	public Long register(PreRegistrationRequest request) {
 		if (registrationRepository.existsByEmail(request.email())) {
 			throw new DuplicateEmailException(CommonErrorCode.DUPLICATE_EMAIL);
 		}
-		PreRegistration preRegistration = request.toEntity();
-		return registrationRepository.save(preRegistration);
+		PreRegistration preRegistration = registrationRepository.save(request.toEntity());
+		return preRegistration.getId();
 	}
 }
