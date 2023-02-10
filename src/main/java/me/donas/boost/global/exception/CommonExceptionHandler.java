@@ -18,7 +18,8 @@ public class CommonExceptionHandler {
 
 	@ExceptionHandler(CommonException.class)
 	public ResponseEntity<ErrorResponse> handleCommonException(CommonException e) {
-		return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.of(e.errorCode()));
+		ErrorCode errorCode = e.errorCode();
+		return ResponseEntity.status(errorCode.httpStatus()).body(ErrorResponse.of(errorCode));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
