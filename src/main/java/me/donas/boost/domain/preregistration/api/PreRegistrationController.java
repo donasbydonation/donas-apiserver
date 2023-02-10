@@ -12,7 +12,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.donas.boost.domain.preregistration.application.PreRegistrationService;
-import me.donas.boost.domain.preregistration.domain.PreRegistration;
 import me.donas.boost.domain.preregistration.dto.PreRegistrationRequest;
 
 @RestController
@@ -24,11 +23,11 @@ public class PreRegistrationController {
 
 	@PostMapping("/pre-registrations")
 	public ResponseEntity<Void> register(@RequestBody @Valid PreRegistrationRequest request) {
-		PreRegistration register = preRegistrationService.register(request);
+		Long registerId = preRegistrationService.register(request);
 
 		URI location = ServletUriComponentsBuilder
 			.fromCurrentContextPath().path("/pre-registrations/{id}")
-			.buildAndExpand(register.getId()).toUri();
+			.buildAndExpand(registerId).toUri();
 
 		return ResponseEntity.created(location).build();
 	}
