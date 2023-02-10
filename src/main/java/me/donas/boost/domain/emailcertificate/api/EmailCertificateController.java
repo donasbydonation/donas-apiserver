@@ -29,7 +29,7 @@ public class EmailCertificateController {
 	}
 
 	@PutMapping("/confirm-email-certification")
-	public ResponseEntity<Void> confirmCertifyEmail(@RequestBody EmailCertificateConfirmRequest request) {
+	public ResponseEntity<Void> confirmCertifyEmail(@RequestBody @Valid EmailCertificateConfirmRequest request) {
 		if (emailCertificateService.confirmCertifyEmail(request)) {
 			return ResponseEntity.ok().build();
 		}
