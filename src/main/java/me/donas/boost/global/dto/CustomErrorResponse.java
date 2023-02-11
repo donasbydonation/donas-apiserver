@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import me.donas.boost.global.exception.ErrorCode;
 
-public record ErrorResponse(
+public record CustomErrorResponse(
 	String name,
 	String httpStatus,
 	String message,
@@ -22,12 +22,12 @@ public record ErrorResponse(
 		}
 	}
 
-	public static ErrorResponse of(ErrorCode errorCode) {
-		return new ErrorResponse(errorCode.name(), errorCode.httpStatus().name(), errorCode.message(),
+	public static CustomErrorResponse of(ErrorCode errorCode) {
+		return new CustomErrorResponse(errorCode.name(), errorCode.httpStatus().name(), errorCode.message(),
 			new ArrayList<>());
 	}
 
-	public static ErrorResponse of(ErrorCode errorCode, List<ValidationError> errors) {
-		return new ErrorResponse(errorCode.name(), errorCode.httpStatus().name(), errorCode.message(), errors);
+	public static CustomErrorResponse of(ErrorCode errorCode, List<ValidationError> errors) {
+		return new CustomErrorResponse(errorCode.name(), errorCode.httpStatus().name(), errorCode.message(), errors);
 	}
 }
