@@ -39,8 +39,7 @@ public class SecurityConfig {
 					.requestMatchers("/api/v1/issue-email-certification").permitAll()
 					.requestMatchers("/api/v1/signup").permitAll()
 					.requestMatchers("/api/v1/login").permitAll()
-					.requestMatchers("/api/v1/test-user").hasRole("USER")
-					.requestMatchers("/api/v1/test-admin").hasRole("ADMIN")
+					.requestMatchers("/api/v1/refresh").permitAll()
 					.anyRequest().authenticated();
 			}).authenticationProvider(authenticationProvider)
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
