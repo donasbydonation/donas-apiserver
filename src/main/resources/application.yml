@@ -23,3 +23,7 @@ spring:
           auth: true
           starttls:
             enable: true
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  expiration-ms: ${JWT_EXPIRATION_MS}
