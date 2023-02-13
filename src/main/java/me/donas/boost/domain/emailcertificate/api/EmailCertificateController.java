@@ -21,14 +21,14 @@ public class EmailCertificateController {
 
 	private final EmailCertificateServiceDecorator emailCertificateService;
 
-	@PostMapping("/issue-email-certification")
+	@PostMapping("/email-certificates")
 	public ResponseEntity<EmailCertificateResponse> issueCertifyEmail(
 		@RequestBody @Valid EmailCertificateIssueRequest request) {
 		EmailCertificateResponse response = emailCertificateService.issueCertifyEmail(request);
 		return ResponseEntity.ok(response);
 	}
 
-	@PutMapping("/confirm-email-certification")
+	@PutMapping("/email-certificates")
 	public ResponseEntity<Void> confirmCertifyEmail(@RequestBody @Valid EmailCertificateConfirmRequest request) {
 		if (emailCertificateService.confirmCertifyEmail(request)) {
 			return ResponseEntity.ok().build();

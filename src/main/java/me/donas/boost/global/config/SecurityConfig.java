@@ -34,8 +34,7 @@ public class SecurityConfig {
 			.and()
 			.authorizeHttpRequests(authorizeRequest -> {
 				authorizeRequest.requestMatchers("/api/v1/pre-registrations").permitAll()
-					.requestMatchers("/api/v1/confirm-email-certification").permitAll()
-					.requestMatchers("/api/v1/issue-email-certification").permitAll()
+					.requestMatchers("/api/v1/email-certificates").permitAll()
 					.requestMatchers("/api/v1/signup").permitAll()
 					.requestMatchers("/api/v1/login").permitAll()
 					.requestMatchers("/api/v1/refresh").permitAll()
