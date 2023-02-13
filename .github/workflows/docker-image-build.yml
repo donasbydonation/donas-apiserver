@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ "develop" ]
   push:
-    branches: [ "feature/issue1" ]
+    branches: [ "feature/issue3" ]
 
 jobs:
   image-build:
@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          submodules: true
+          token: ${{ secrets.GH_PAT }}
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
