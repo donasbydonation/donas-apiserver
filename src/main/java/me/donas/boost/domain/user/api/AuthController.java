@@ -2,10 +2,13 @@ package me.donas.boost.domain.user.api;
 
 import java.net.URI;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -33,6 +36,22 @@ public class AuthController {
 			.buildAndExpand(id).toUri();
 
 		return ResponseEntity.created(location).build();
+	}
+
+	@GetMapping("/nickname")
+	public ResponseEntity<Void> validateDuplicationNickname(@RequestParam(defaultValue = "") String value) {
+		if (authService.validateNickname(value)) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+
+	@GetMapping("/username")
+	public ResponseEntity<Void> validateDuplicationUsername(@RequestParam(defaultValue = "") String value) {
+		if (authService.validateUsername(value)) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	@PostMapping("/login")
