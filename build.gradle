@@ -42,7 +42,7 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-tasks.register('copySubmodule') {
+task copySubmodule {
     copy {
         from './backend-security'
         include "*.yml"
