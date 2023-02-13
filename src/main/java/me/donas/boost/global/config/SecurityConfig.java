@@ -39,6 +39,8 @@ public class SecurityConfig {
 					.requestMatchers("/api/v1/signup").permitAll()
 					.requestMatchers("/api/v1/login").permitAll()
 					.requestMatchers("/api/v1/refresh").permitAll()
+					.requestMatchers("/api/v1/nickname").permitAll()
+					.requestMatchers("/api/v1/username").permitAll()
 					.anyRequest().authenticated();
 			}).authenticationProvider(authenticationProvider)
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
