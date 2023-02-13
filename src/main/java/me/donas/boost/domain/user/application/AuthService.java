@@ -30,14 +30,32 @@ public class AuthService {
 	private final JwtService jwtService;
 
 	public Long register(SignupRequest request) {
-		if (isDuplicateNickname(request.nickname())) {
-			throw new UserException(DUPLICATE_NICKNAME);
-		}
-		if (isDuplicateUsername(request.username())) {
-			throw new UserException(DUPLICATE_USERNAME);
-		}
+		validateUsername(request.username());
+		validateNickname(request.nickname());
 		User user = userRepository.save(request.toEntity(passwordEncoder));
 		return user.getId();
+	}
+
+	@Transactional(readOnly = true)
+	public boolean validateUsername(String username) {
+		if (username.isBlank()) {
+			return false;
+		}
+		if (isDuplicateUsername(username)) {
+			throw new UserException(DUPLICATE_USERNAME);
+		}
+		return true;
+	}
+
+	@Transactional(readOnly = true)
+	public boolean validateNickname(String nickname) {
+		if (nickname.isBlank()) {
+			return false;
+		}
+		if (isDuplicateNickname(nickname)) {
+			throw new UserException(DUPLICATE_NICKNAME);
+		}
+		return true;
 	}
 
 	public TokenResponse login(LoginRequest request) {
