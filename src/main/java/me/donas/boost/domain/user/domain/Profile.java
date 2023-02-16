@@ -4,10 +4,12 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.Lob;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Profile {
 	String nickname;
 
