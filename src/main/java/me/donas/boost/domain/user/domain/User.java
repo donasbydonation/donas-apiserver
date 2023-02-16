@@ -97,4 +97,8 @@ public class User {
 		this.password = updatePassword;
 		this.lastChangePasswordDate = LocalDateTime.now();
 	}
+
+	public void updateProfile(Profile profile) {
+		this.profile = profile;
+	}
 }
