@@ -32,6 +32,10 @@ spring:
       credentials:
         access-key: ${AWS_ACCESS_KEY}
         secret-key: ${AWS_SECRET_KEY}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 15MB
 
 
 jwt:
