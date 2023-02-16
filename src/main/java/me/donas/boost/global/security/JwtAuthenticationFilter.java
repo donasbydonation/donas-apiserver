@@ -1,7 +1,5 @@
 package me.donas.boost.global.security;
 
-import static me.donas.boost.domain.user.exception.UserErrorCode.*;
-
 import java.io.IOException;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
