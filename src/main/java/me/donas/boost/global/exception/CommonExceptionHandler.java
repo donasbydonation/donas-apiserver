@@ -10,6 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 
 import lombok.extern.slf4j.Slf4j;
 import me.donas.boost.global.dto.CustomErrorResponse;
@@ -36,9 +37,15 @@ public class CommonExceptionHandler {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(CustomErrorResponse.of(UNAUTHORIZED));
 	}
 
+	@ExceptionHandler(MultipartException.class)
+	public ResponseEntity<CustomErrorResponse> handleMultipartException(MultipartException e) {
+		return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(CustomErrorResponse.of(PAYLOAD_TOO_LARGE));
+	}
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<CustomErrorResponse> handleException(Exception e) {
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(CustomErrorResponse.of(INTERNAL_SERVER_ERROR));
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(CustomErrorResponse.of(INTERNAL_SERVER_ERROR));
 	}
 
 	private CustomErrorResponse makeErrorResponse(MethodArgumentNotValidException e) {
