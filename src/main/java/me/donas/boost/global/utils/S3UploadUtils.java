@@ -5,8 +5,6 @@ import static org.springframework.http.MediaType.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -15,8 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 import io.awspring.cloud.s3.ObjectMetadata;
 import io.awspring.cloud.s3.S3Operations;
 import io.awspring.cloud.s3.S3Resource;
+import lombok.extern.slf4j.Slf4j;
 import me.donas.boost.global.exception.FileException;
 
+@Slf4j
 @Component
 public class S3UploadUtils {
 	private final String bucket;
@@ -31,26 +31,20 @@ public class S3UploadUtils {
 		if (isNotImage(file)) {
 			throw new FileException(INVALID_FILE_TYPE);
 		}
-		String fileExtension = getExtension(Objects.requireNonNull(file.getOriginalFilename()));
-		String fileName = String.format("%s/profile.%s", username, fileExtension);
+		String fileName = String.format("%s/profile.%s", username, getExtension(file.getOriginalFilename()));
 		try (InputStream is = file.getInputStream()) {
 			S3Resource resource = s3Operations.upload(bucket, fileName, is,
 				ObjectMetadata.builder().contentType(file.getContentType()).build());
-
 			return resource.getURL().toString();
 		} catch (IOException e) {
 			throw new FileException(FILE_UPLOAD_ERROR);
 		}
 	}
 
-	public void delete(String s3Url) {
-		if (Objects.requireNonNull(s3Url).isBlank()) {
-			return;
-		}
-		s3Operations.deleteObject(s3Url);
-	}
-
 	private String getExtension(String filename) {
+		if (filename == null) {
+			throw new FileException(INVALID_FILE_TYPE);
+		}
 		return filename.substring(filename.lastIndexOf(".") + 1);
 	}
 
