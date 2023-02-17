@@ -36,9 +36,9 @@ public class ProfileController {
 	public ResponseEntity<ProfileUpdateResponse> updateProfile(
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
 		@Valid @RequestPart(value = "profileData") ProfileUpdateRequest request,
-		@RequestPart(value = "image", required = false) MultipartFile image
+		@RequestPart(value = "image", required = false) MultipartFile file
 	) {
-		ProfileUpdateResponse response = profileService.updateProfile(userPrincipal, request, image);
+		ProfileUpdateResponse response = profileService.updateProfile(userPrincipal, request, file);
 		return ResponseEntity.ok(response);
 	}
 }
