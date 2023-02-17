@@ -2,7 +2,6 @@ package me.donas.boost.domain.user.application;
 
 import static me.donas.boost.domain.user.exception.UserErrorCode.*;
 import static me.donas.boost.global.exception.CommonErrorCode.*;
-import static org.springframework.http.MediaType.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +24,14 @@ public class ProfileService {
 
 	@Transactional
 	public ProfileUpdateResponse updateProfile(UserPrincipal userPrincipal, ProfileUpdateRequest request,
-		MultipartFile image) {
+		MultipartFile file) {
 		User user = userRepository.findByUsername(userPrincipal.getUsername()).orElseThrow(
 			() -> new UserException(NOTFOUND)
 		);
-		if (validateNickname(request.nickname())) {
+		if (!validateNickname(request.nickname())) {
 			throw new UserException(INVALID_PARAMETER);
 		}
-		String imageUrl = (image != null) ? saveProfileImage(user.getUsername(), image) : user.getProfile().getImage();
+		String imageUrl = (file != null) ? saveProfileImage(user.getUsername(), file) : user.getProfile().getImage();
 		user.updateProfile(request.toEntity(imageUrl));
 		return ProfileUpdateResponse.of(user.getProfile());
 	}
@@ -51,7 +50,7 @@ public class ProfileService {
 		return userRepository.existsByProfileNickname(nickname);
 	}
 
-	private String saveProfileImage(String username, MultipartFile image) {
-		return s3UploadUtils.upload(username, image);
+	private String saveProfileImage(String username, MultipartFile file) {
+		return s3UploadUtils.upload(username, file);
 	}
 }
