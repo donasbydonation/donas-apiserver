@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.donas.boost.domain.user.dto.UpdateUserInfoRequest;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -100,5 +101,11 @@ public class User {
 
 	public void updateProfile(Profile profile) {
 		this.profile = profile;
+	}
+
+	public void updateUserInformation(UpdateUserInfoRequest request) {
+		this.gender = request.gender();
+		this.birthDay = request.birthDay();
+		this.agreePromotion = request.agreePromotion();
 	}
 }
