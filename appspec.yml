@@ -1,6 +1,9 @@
 version: 0.0
 os: linux
-files: []
+files:
+  - source: /
+    destination: /etc/donas/be
+    overwrite: yes
 hooks:
   ApplicationStop:
     - location: aws/scripts/application_stop.sh

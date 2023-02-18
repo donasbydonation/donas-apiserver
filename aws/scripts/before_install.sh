@@ -1,4 +1,3 @@
 #!/bin/bash
 
-cd /etc/donas
-./before_install.sh
+docker compose -f /etc/donas/docker-compose.yaml pull
