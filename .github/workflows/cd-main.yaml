@@ -11,6 +11,8 @@ jobs:
     env:
       AWS_CODEDEPLOY_APP_NAME: 'donas-codedeploy'
       AWS_CODEDEPLOY_DEPLOY_GROUP_NAME: 'donas-codedeploy'
+      AWS_S3_SERVER_BUCKET: 'donas-server-bucket'
+      AWS_DEFAULT_REGION: 'ap-northeast-2'
     steps:
       - name: Checkout
         uses: actions/checkout@v3.0.1
@@ -19,12 +21,19 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2
-      - name: Code Deploy
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+      - name: Packaging
+        run: tar -cpzvf ./$GITHUB_SHA.tgz appspec.yml aws/scripts/*.sh
+      - name: Upload S3
         run: |
-          aws deploy create-deployment \
-            --application-name ${AWS_CODEDEPLOY_APP_NAME} \
-            --deployment-group-name ${AWS_CODEDEPLOY_DEPLOY_GROUP_NAME} \
-            --deployment-config-name CodeDeployDefault.OneAtATime \
-            --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
-            --no-paginate
+          aws s3 cp \
+            --region $AWS_DEFAULT_REGION \
+            ./$GITHUB_SHA.tgz s3://$AWS_S3_SERVER_BUCKET/codedeploy/be/$GITHUB_SHA.tgz
+      # - name: Code Deploy
+      #   run: |
+      #     aws deploy create-deployment \
+      #       --application-name ${AWS_CODEDEPLOY_APP_NAME} \
+      #       --deployment-group-name ${AWS_CODEDEPLOY_DEPLOY_GROUP_NAME} \
+      #       --deployment-config-name CodeDeployDefault.OneAtATime \
+      #       --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
+      #       --no-paginate
