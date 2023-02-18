@@ -14,13 +14,15 @@ public class UserPrincipal implements UserDetails {
 	private final String username;
 	private final String password;
 	private final Collection<? extends GrantedAuthority> authorities;
+	private final boolean accountExpired;
 
 	@Builder
-	protected UserPrincipal(Long id, String username, String password,
+	protected UserPrincipal(Long id, String username, String password, boolean accountExpired,
 		Collection<? extends GrantedAuthority> authorities) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
+		this.accountExpired = accountExpired;
 		this.authorities = authorities;
 	}
 
@@ -29,6 +31,7 @@ public class UserPrincipal implements UserDetails {
 			.id(user.getId())
 			.username(user.getUsername())
 			.password(user.getPassword())
+			.accountExpired(user.isWithdraw())
 			.authorities(List.of(new SimpleGrantedAuthority(user.getRole().name()))).build();
 	}
 
@@ -53,7 +56,7 @@ public class UserPrincipal implements UserDetails {
 
 	@Override
 	public boolean isAccountNonExpired() {
-		return true;
+		return !accountExpired;
 	}
 
 	@Override
