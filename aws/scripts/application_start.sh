@@ -1,4 +1,3 @@
 #!/bin/bash
 
-cd /etc/donas
-./application_start.sh
+docker compose -f /etc/donas/docker-compose.yaml up -d

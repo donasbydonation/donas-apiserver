@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd /etc/donas
-./application_stop.sh
+docker compose -f /etc/donas/docker-compose.yaml stop
+docker compose -f /etc/donas/docker-compose.yaml rm
