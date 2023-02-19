@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import me.donas.boost.domain.user.domain.User;
 import me.donas.boost.domain.user.domain.UserPrincipal;
 import me.donas.boost.domain.user.dto.ProfileUpdateRequest;
-import me.donas.boost.domain.user.dto.ProfileUpdateResponse;
+import me.donas.boost.domain.user.dto.ProfileResponse;
 import me.donas.boost.domain.user.exception.UserException;
 import me.donas.boost.domain.user.repository.UserRepository;
 import me.donas.boost.global.utils.S3UploadUtils;
@@ -22,8 +22,14 @@ public class ProfileService {
 	private final UserRepository userRepository;
 	private final S3UploadUtils s3UploadUtils;
 
+	@Transactional(readOnly = true)
+	public ProfileResponse getProfile(String username) {
+		User user = userRepository.findByUsername(username).orElseThrow(() -> new UserException(NOTFOUND));
+		return ProfileResponse.of(user.getProfile());
+	}
+
 	@Transactional
-	public ProfileUpdateResponse updateProfile(UserPrincipal userPrincipal, ProfileUpdateRequest request,
+	public ProfileResponse updateProfile(UserPrincipal userPrincipal, ProfileUpdateRequest request,
 		MultipartFile file) {
 		User user = userRepository.findByUsername(userPrincipal.getUsername()).orElseThrow(
 			() -> new UserException(NOTFOUND)
@@ -33,7 +39,7 @@ public class ProfileService {
 		}
 		String imageUrl = (file != null) ? saveProfileImage(user.getUsername(), file) : user.getProfile().getImage();
 		user.updateProfile(request.toEntity(imageUrl));
-		return ProfileUpdateResponse.of(user.getProfile());
+		return ProfileResponse.of(user.getProfile());
 	}
 
 	private boolean validateNickname(String nickname) {
