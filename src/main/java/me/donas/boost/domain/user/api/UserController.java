@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,12 +17,23 @@ import me.donas.boost.domain.user.application.UserService;
 import me.donas.boost.domain.user.domain.UserPrincipal;
 import me.donas.boost.domain.user.dto.UpdatePasswordRequest;
 import me.donas.boost.domain.user.dto.UpdateUserInfoRequest;
+import me.donas.boost.domain.user.dto.UserInfoResponse;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 public class UserController {
 	private final UserService userService;
+
+	@GetMapping("/{username}")
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<UserInfoResponse> getUserInformation(
+		@AuthenticationPrincipal UserPrincipal userPrincipal,
+		@PathVariable String username
+	) {
+		UserInfoResponse response = userService.getUserInformation(userPrincipal, username);
+		return ResponseEntity.ok(response);
+	}
 
 	@PutMapping("/{username}/password")
 	@PreAuthorize("hasRole('USER')")

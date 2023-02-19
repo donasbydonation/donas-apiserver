@@ -11,6 +11,7 @@ import me.donas.boost.domain.user.domain.User;
 import me.donas.boost.domain.user.domain.UserPrincipal;
 import me.donas.boost.domain.user.dto.UpdatePasswordRequest;
 import me.donas.boost.domain.user.dto.UpdateUserInfoRequest;
+import me.donas.boost.domain.user.dto.UserInfoResponse;
 import me.donas.boost.domain.user.exception.UserException;
 import me.donas.boost.domain.user.repository.UserRepository;
 
@@ -20,6 +21,13 @@ import me.donas.boost.domain.user.repository.UserRepository;
 public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+
+	@Transactional(readOnly = true)
+	public UserInfoResponse getUserInformation(UserPrincipal userPrincipal, String username) {
+		validateUsername(userPrincipal, username);
+		User user = userRepository.findByUsername(username).orElseThrow(() -> new UserException(NOTFOUND));
+		return UserInfoResponse.of(user);
+	}
 
 	public void updatePassword(UserPrincipal userPrincipal, String username, UpdatePasswordRequest request) {
 		validateUsername(userPrincipal, username);
