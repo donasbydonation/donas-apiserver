@@ -1,7 +1,5 @@
 package me.donas.boost.global.config;
 
-import static me.donas.boost.domain.user.exception.UserErrorCode.*;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -33,12 +31,15 @@ public class SecurityConfig {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.authorizeHttpRequests(authorizeRequest -> {
+				authorizeRequest.requestMatchers("/docs/**").permitAll();
 				authorizeRequest.requestMatchers("/api/v1/pre-registrations").permitAll()
 					.requestMatchers("/api/v1/email-certificates").permitAll()
 					.requestMatchers("/api/v1/signup").permitAll()
 					.requestMatchers("/api/v1/login").permitAll()
 					.requestMatchers("/api/v1/refresh").permitAll()
 					.requestMatchers("/api/v1/nickname").permitAll()
+					.requestMatchers("/api/v1/profile/**").permitAll()
+					.requestMatchers("/api/v1/profile").permitAll()
 					.requestMatchers("/api/v1/username").permitAll()
 					.anyRequest().authenticated();
 			}).authenticationProvider(authenticationProvider)
