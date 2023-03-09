@@ -1,0 +1,33 @@
+= Rest Docs API Document
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[[introduction]]
+== 소개
+
+Donas API Document 입니다.
+
+[[common]]
+== 공통 사항
+
+API에 관계없이 아래 사항을 지켜주셔야 합니다.
+
+=== Header
+
+|===
+| name | 설명
+
+| `Authorization`
+| API를 사용하기 위한 인증 키
+|===
+
+[[Member-단일-조회]]
+=== Member 단일 조회
+operation::AuthControllerTest/loginFailTest[snippets='http-request,path-parameters,http-response,response-fields']
+
+==== Member 조회 실패
+include::{snippets}/AuthControllerTest/loginFailTest/curl-request.adoc[]
