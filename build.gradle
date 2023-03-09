@@ -2,13 +2,16 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.2'
     id 'io.spring.dependency-management' version '1.1.0'
+    id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
 group = 'me.donas'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
+
 configurations {
+    asciidoctorExt
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -33,7 +36,11 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5', 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     // aws starter s3
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.0.0-RC1'
-
+    // restdocs
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    //
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testCompileOnly 'org.projectlombok:lombok'
@@ -44,7 +51,38 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-task copySubmodule {
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
+test {
+    useJUnitPlatform()
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    dependsOn test
+}
+
+asciidoctor.doFirst {
+    delete file(asciidoctor.outputDir)
+}
+
+bootJar {
+    dependsOn asciidoctor
+    copy {
+        from(asciidoctor.outputDir)
+        into("src/main/resources/static/docs")
+    }
+}
+
+jar {
+    enabled = false
+}
+
+task copySubmodule(type: Copy) {
     copy {
         from './backend-security'
         include "*.yml"
