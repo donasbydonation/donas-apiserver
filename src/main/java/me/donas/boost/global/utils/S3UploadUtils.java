@@ -27,11 +27,11 @@ public class S3UploadUtils {
 		this.s3Operations = s3Operations;
 	}
 
-	public String upload(String username, MultipartFile file) {
+	public String upload(String wantedFileName, MultipartFile file) {
 		if (isNotImage(file)) {
 			throw new FileException(INVALID_FILE_TYPE);
 		}
-		String fileName = String.format("%s/profile.%s", username, getExtension(file.getOriginalFilename()));
+		String fileName = wantedFileName + "." + getExtension(file.getOriginalFilename());
 		try (InputStream is = file.getInputStream()) {
 			S3Resource resource = s3Operations.upload(bucket, fileName, is,
 				ObjectMetadata.builder().contentType(file.getContentType()).build());
