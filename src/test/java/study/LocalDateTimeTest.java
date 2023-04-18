@@ -1,6 +1,7 @@
 package study;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,4 +20,14 @@ class LocalDateTimeTest {
 
 		Assertions.assertThat(validTime.isAfter(now)).isTrue();
 	}
+
+	@Test
+	void formatterTest() {
+		String isoString = "2023-04-17T11:30:00.000Z";
+		DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+		LocalDateTime localDateTime = LocalDateTime.parse(isoString, formatter);
+		System.out.println(localDateTime);
+	}
+
+
 }
