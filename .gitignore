@@ -40,3 +40,4 @@ application-*.yml
 docker-compose-*.yml
 .env
 /db
+**/generated
