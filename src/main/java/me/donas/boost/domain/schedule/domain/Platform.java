@@ -11,8 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.donas.boost.domain.schedule.dto.PlatformRequest;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,4 +33,28 @@ public class Platform {
 	PlatformProvider provider;
 
 	String broadcastLink;
+
+	@Builder
+	public Platform(CreatorInfo creatorInfo, PlatformProvider provider, String broadcastLink) {
+		setCreatorInfo(creatorInfo);
+		this.provider = provider;
+		this.broadcastLink = broadcastLink;
+	}
+
+	private void setCreatorInfo(CreatorInfo creatorInfo) {
+		creatorInfo.getPlatforms().add(this);
+		this.creatorInfo = creatorInfo;
+	}
+
+	public void update(PlatformRequest request) {
+		this.broadcastLink = request.broadcastLink();
+	}
+
+	public boolean validateCreator(Long creatorInfoId) {
+		return this.creatorInfo.getId().equals(creatorInfoId);
+	}
+
+	public void remove() {
+		this.creatorInfo = null;
+	}
 }
