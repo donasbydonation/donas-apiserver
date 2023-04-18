@@ -44,6 +44,7 @@ public class CommonExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<CustomErrorResponse> handleException(Exception e) {
+		log.info("",e);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 			.body(CustomErrorResponse.of(INTERNAL_SERVER_ERROR));
 	}
