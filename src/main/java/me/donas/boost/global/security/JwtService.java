@@ -22,18 +22,24 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import me.donas.boost.domain.common.admin.AdminUser;
 import me.donas.boost.domain.user.exception.UserException;
 
 @Slf4j
 @Service
 public class JwtService {
 	private final long tokenExpirationMs;
+	private final long adminTokenExpirationMs;
 	private final Key key;
 
-	public JwtService(@Value("${jwt.secret-key}") String secretKey,
-		@Value("${jwt.expiration-ms}") long tokenExpirationMs) {
+	public JwtService(
+		@Value("${jwt.secret-key}") String secretKey,
+		@Value("${jwt.expiration-ms}") long tokenExpirationMs,
+		@Value("${jwt.admin-expiration-ms}") long adminTokenExpirationMs
+	) {
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		this.tokenExpirationMs = tokenExpirationMs;
+		this.adminTokenExpirationMs = adminTokenExpirationMs;
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
@@ -44,6 +50,17 @@ public class JwtService {
 	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
 		final Claims claims = extractAllClaims(token);
 		return claimsResolver.apply(claims);
+	}
+
+	public String generateAdminToken(AdminUser admin) {
+		long currentTime = System.currentTimeMillis();
+		return Jwts.builder()
+			.setClaims(new HashMap<>())
+			.setSubject(admin.getUsername())
+			.setIssuedAt(new Date(currentTime))
+			.setExpiration(new Date(currentTime + adminTokenExpirationMs))
+			.signWith(key, SignatureAlgorithm.HS512)
+			.compact();
 	}
 
 	public String generateToken(UserDetails userDetails) {
