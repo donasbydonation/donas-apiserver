@@ -63,7 +63,7 @@ public class User {
 
 	@Builder
 	public User(String username, String password, String email, Gender gender, LocalDate birthDay,
-		boolean agreePromotion, Profile profile) {
+		boolean agreePromotion, Profile profile, Role role) {
 		this.username = username;
 		this.password = password;
 		this.email = email;
@@ -71,7 +71,7 @@ public class User {
 		this.birthDay = birthDay;
 		this.agreePromotion = agreePromotion;
 		this.profile = profile;
-		this.role = Role.ROLE_USER;
+		this.role = role;
 	}
 
 	public void withdraw() {

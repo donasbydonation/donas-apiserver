@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import me.donas.boost.domain.user.domain.Gender;
 import me.donas.boost.domain.user.domain.Profile;
+import me.donas.boost.domain.user.domain.Role;
 import me.donas.boost.domain.user.domain.User;
 
 public record SignupRequest(@NotBlank String username, @NotBlank String password, @NotBlank @Email String email,
@@ -25,7 +26,8 @@ public record SignupRequest(@NotBlank String username, @NotBlank String password
 			.gender(gender)
 			.birthDay(birthDay)
 			.agreePromotion(agreePromotion)
-			.profile(profile).build();
+			.profile(profile)
+			.role(Role.ROLE_USER).build();
 	}
 
 	private Gender getGender() {
