@@ -1,4 +1,4 @@
-package me.donas.boost.domain.schedule.api;
+package me.donas.boost.domain.common.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import me.donas.boost.domain.schedule.application.AdminService;
+import me.donas.boost.domain.common.application.AdminService;
 import me.donas.boost.domain.user.dto.LoginRequest;
+import me.donas.boost.domain.user.dto.RefreshRequest;
 import me.donas.boost.domain.user.dto.TokenResponse;
 
 @RestController
@@ -21,6 +22,12 @@ public class AdminController {
 	@PostMapping("/admin/login")
 	public ResponseEntity<TokenResponse> adminLogin(@RequestBody @Valid LoginRequest request) {
 		TokenResponse tokenResponse = adminService.adminLogin(request);
+		return ResponseEntity.ok(tokenResponse);
+	}
+
+	@PostMapping("/admin/refresh")
+	public ResponseEntity<TokenResponse> adminRefresh(@RequestBody @Valid RefreshRequest request) {
+		TokenResponse tokenResponse = adminService.adminRefresh(request);
 		return ResponseEntity.ok(tokenResponse);
 	}
 }
