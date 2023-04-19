@@ -24,6 +24,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import me.donas.boost.common.config.RestDocsConfig;
+import me.donas.boost.domain.common.admin.AdminUser;
+import me.donas.boost.domain.user.repository.UserRepository;
 import me.donas.boost.global.security.JwtService;
 
 @ExtendWith(RestDocumentationExtension.class)
@@ -41,6 +43,12 @@ public abstract class ControllerTest {
 
 	@Autowired
 	protected RestDocumentationResultHandler restDocs;
+
+	@MockBean
+	protected UserRepository userRepository;
+
+	@MockBean
+	protected AdminUser adminUser;
 
 	protected final FieldDescriptor[] exceptionResponseFields = new FieldDescriptor[] {
 		fieldWithPath("name").type(STRING).description("예외 이름"),
