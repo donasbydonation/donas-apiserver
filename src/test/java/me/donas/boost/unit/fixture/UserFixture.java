@@ -7,6 +7,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import me.donas.boost.domain.user.domain.Gender;
 import me.donas.boost.domain.user.domain.Profile;
+import me.donas.boost.domain.user.domain.Role;
 import me.donas.boost.domain.user.domain.User;
 import me.donas.boost.domain.user.domain.UserPrincipal;
 import me.donas.boost.domain.user.dto.LoginRequest;
@@ -43,6 +44,7 @@ public class UserFixture {
 			.birthDay(BIRTH_DAY)
 			.gender(GENDER)
 			.agreePromotion(AGREE_PROMOTION)
+			.role(Role.ROLE_USER)
 			.build();
 		ReflectionTestUtils.setField(user, "id", USER_ID);
 		return user;
