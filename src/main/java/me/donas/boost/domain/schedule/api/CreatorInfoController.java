@@ -24,6 +24,7 @@ import me.donas.boost.domain.schedule.dto.CreatorInfoRequest;
 import me.donas.boost.domain.schedule.dto.CreatorInfoResponse;
 import me.donas.boost.domain.schedule.dto.CreatorInfoSimpleResponse;
 import me.donas.boost.domain.schedule.dto.CreatorInfoUpdateRequest;
+import me.donas.boost.domain.schedule.dto.CreatorInfosResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,7 +60,7 @@ public class CreatorInfoController {
 
 	@GetMapping("/creator-infos")
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<List<CreatorInfoResponse>> readCreatorInfosFromAdmin(
+	public ResponseEntity<CreatorInfosResponse> readCreatorInfosFromAdmin(
 		@RequestParam(defaultValue = "10") int size,
 		@RequestParam(defaultValue = "0") int page
 	) {
