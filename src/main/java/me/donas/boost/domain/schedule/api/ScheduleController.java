@@ -24,6 +24,7 @@ import me.donas.boost.domain.schedule.application.ScheduleService;
 import me.donas.boost.domain.schedule.dto.ScheduleRequest;
 import me.donas.boost.domain.schedule.dto.ScheduleResponse;
 import me.donas.boost.domain.schedule.dto.ScheduleUpdateRequest;
+import me.donas.boost.domain.schedule.dto.SchedulesResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class ScheduleController {
 
 	@GetMapping("/schedules")
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<List<ScheduleResponse>> readSchedules(
+	public ResponseEntity<SchedulesResponse> readSchedules(
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size
 	) {
