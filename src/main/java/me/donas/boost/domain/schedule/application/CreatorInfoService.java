@@ -21,6 +21,7 @@ import me.donas.boost.domain.schedule.dto.CreatorInfoRequest;
 import me.donas.boost.domain.schedule.dto.CreatorInfoResponse;
 import me.donas.boost.domain.schedule.dto.CreatorInfoSimpleResponse;
 import me.donas.boost.domain.schedule.dto.CreatorInfoUpdateRequest;
+import me.donas.boost.domain.schedule.dto.CreatorInfosResponse;
 import me.donas.boost.domain.schedule.dto.PlatformRequest;
 import me.donas.boost.domain.schedule.exception.CreatorInfoException;
 import me.donas.boost.domain.schedule.repository.CreatorInfoRepository;
@@ -43,9 +44,16 @@ public class CreatorInfoService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<CreatorInfoResponse> readCreatorInfosFromAdmin(int size, int page) {
-		Page<CreatorInfo> result = creatorInfoRepository.findAll(PageRequest.of(page, size));
-		return result.stream().map(CreatorInfoResponse::of).toList();
+	public CreatorInfosResponse readCreatorInfosFromAdmin(int size, int page) {
+		List<CreatorInfoResponse> creatorInfos = creatorInfoRepository
+			.findAll(PageRequest.of(page, size))
+			.stream()
+			.map(CreatorInfoResponse::of)
+			.toList();
+
+		long totalCount = creatorInfoRepository.count();
+		long totalPage = (totalCount % size == 0) ? totalCount / size : (totalCount / size) + 1;
+		return CreatorInfosResponse.of(totalPage, creatorInfos);
 	}
 
 	@Transactional(readOnly = true)
