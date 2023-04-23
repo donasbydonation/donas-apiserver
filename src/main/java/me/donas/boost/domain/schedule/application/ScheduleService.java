@@ -17,6 +17,7 @@ import me.donas.boost.domain.schedule.dto.CreatorInfoRequest;
 import me.donas.boost.domain.schedule.dto.ScheduleRequest;
 import me.donas.boost.domain.schedule.dto.ScheduleResponse;
 import me.donas.boost.domain.schedule.dto.ScheduleUpdateRequest;
+import me.donas.boost.domain.schedule.dto.SchedulesResponse;
 import me.donas.boost.domain.schedule.exception.CreatorInfoErrorCode;
 import me.donas.boost.domain.schedule.exception.CreatorInfoException;
 import me.donas.boost.domain.schedule.exception.ScheduleErrorCode;
@@ -43,8 +44,15 @@ public class ScheduleService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ScheduleResponse> readSchedulesFromAdmin(int page, int size) {
-		return scheduleRepository.findAll(PageRequest.of(page, size)).stream().map(ScheduleResponse::of).toList();
+	public SchedulesResponse readSchedulesFromAdmin(int page, int size) {
+		List<ScheduleResponse> schedules = scheduleRepository
+			.findAll(PageRequest.of(page, size))
+			.stream()
+			.map(ScheduleResponse::of)
+			.toList();
+		long totalCount = scheduleRepository.count();
+		long totalPage = (totalCount % size == 0) ? totalCount / size : (totalCount / size) + 1;
+		return SchedulesResponse.of(totalPage, schedules);
 	}
 
 	@Transactional
