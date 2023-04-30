@@ -3,15 +3,15 @@ name: docker-image-build
 on:
   pull_request:
     branches: [ "develop" ]
-  push:
-    branches: [ "feature/issue1" ]
-
 jobs:
   image-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          submodules: true
+          token: ${{ secrets.GH_PAT }}
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
