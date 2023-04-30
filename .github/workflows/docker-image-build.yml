@@ -3,7 +3,6 @@ name: docker-image-build
 on:
   pull_request:
     branches: [ "develop" ]
-
 jobs:
   image-build:
     runs-on: ubuntu-latest
