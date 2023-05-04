@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import me.donas.boost.domain.schedule.domain.CreatorInfo;
 import me.donas.boost.domain.schedule.domain.Platform;
 import me.donas.boost.domain.schedule.domain.PlatformProvider;
+import me.donas.boost.domain.schedule.dto.CreatorInfoListResponse;
 import me.donas.boost.domain.schedule.dto.CreatorInfoRequest;
 import me.donas.boost.domain.schedule.dto.CreatorInfoResponse;
 import me.donas.boost.domain.schedule.dto.CreatorInfoSimpleResponse;
@@ -117,5 +118,21 @@ public class CreatorInfoService {
 		);
 		creatorInfoRepository.delete(creatorInfo);
 		return creatorInfo.getId();
+	}
+
+	@Transactional(readOnly = true)
+	public List<CreatorInfoListResponse> searchCreatorInfo(String q) {
+		return creatorInfoRepository.findAllByNameContainingIgnoreCase(q)
+			.stream()
+			.map(CreatorInfoListResponse::of)
+			.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<CreatorInfoListResponse> readCreatorForList() {
+		return creatorInfoRepository.findAll()
+			.stream()
+			.map(CreatorInfoListResponse::of)
+			.toList();
 	}
 }
