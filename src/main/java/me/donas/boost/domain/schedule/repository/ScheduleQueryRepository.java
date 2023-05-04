@@ -1,0 +1,44 @@
+package me.donas.boost.domain.schedule.repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import lombok.RequiredArgsConstructor;
+import me.donas.boost.domain.schedule.domain.QCreatorInfo;
+import me.donas.boost.domain.schedule.domain.QPlatform;
+import me.donas.boost.domain.schedule.domain.QSchedule;
+import me.donas.boost.domain.schedule.dto.QScheduleQueryResponse;
+import me.donas.boost.domain.schedule.dto.ScheduleQueryResponse;
+
+@Repository
+@RequiredArgsConstructor
+public class ScheduleQueryRepository {
+	private final JPAQueryFactory queryFactory;
+
+	public List<ScheduleQueryResponse> findAllByScheduledTimeBetween(int day, LocalDateTime start, LocalDateTime end) {
+		QSchedule schedule = QSchedule.schedule;
+		QCreatorInfo creatorInfo = QCreatorInfo.creatorInfo;
+		QPlatform platform = QPlatform.platform;
+
+		return queryFactory.select(new QScheduleQueryResponse(
+				creatorInfo.name,
+				creatorInfo.profileImage,
+				platform.provider,
+				platform.broadcastLink,
+				schedule.title,
+				schedule.bannerImage,
+				schedule.description,
+				schedule.scheduledTime
+			))
+			.from(schedule)
+			.leftJoin(creatorInfo).on(schedule.creatorInfo.id.eq(creatorInfo.id))
+			.leftJoin(platform).on(schedule.creatorInfo.id.eq(platform.creatorInfo.id))
+			.where(schedule.scheduledTime.between(start.plusDays(day), end.plusDays(day)))
+			.orderBy(schedule.scheduledTime.asc())
+			.fetch();
+	}
+}
