@@ -20,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.donas.boost.domain.schedule.application.CreatorInfoService;
+import me.donas.boost.domain.schedule.dto.CreatorInfoListResponse;
 import me.donas.boost.domain.schedule.dto.CreatorInfoRequest;
 import me.donas.boost.domain.schedule.dto.CreatorInfoResponse;
 import me.donas.boost.domain.schedule.dto.CreatorInfoSimpleResponse;
@@ -75,6 +76,18 @@ public class CreatorInfoController {
 	@GetMapping("/creator-infos/all")
 	public ResponseEntity<List<CreatorInfoSimpleResponse>> readCreatorsNameWithId() {
 		return ResponseEntity.ok(creatorInfoService.readCreatorsNameWithId());
+	}
+
+	@GetMapping("/creator-infos/list")
+	public ResponseEntity<List<CreatorInfoListResponse>> readCreatorForList() {
+		return ResponseEntity.ok(creatorInfoService.readCreatorForList());
+	}
+
+	@GetMapping("/creator-infos/search")
+	public ResponseEntity<List<CreatorInfoListResponse>> searchCreatorInfo(
+		@RequestParam String q
+	) {
+		return ResponseEntity.ok(creatorInfoService.searchCreatorInfo(q));
 	}
 
 	@DeleteMapping("/creator-infos/{id}")
