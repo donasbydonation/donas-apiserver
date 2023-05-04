@@ -44,6 +44,7 @@ public class SecurityConfig {
 					.requestMatchers("/api/v1/admin/**").permitAll()
 					.requestMatchers("/api/v1/creator-infos/**").permitAll()
 					.requestMatchers("/api/v1/health").permitAll()
+					.requestMatchers("/api/v1/schedules/**").permitAll()
 					.anyRequest().authenticated();
 			}).authenticationProvider(authenticationProvider)
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
