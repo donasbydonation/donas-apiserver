@@ -1,21 +1,29 @@
-version: "3.8"
 services:
-  server:
-    image: boost
-    container_name: boost
+  back-end:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: ghcr.io/donasbydonation/back-end:${HOSTNAME}
+    platform: linux/amd64
+    container_name: apiserver
     restart: always
-    env_file: .env
+    env_file: back-end.donas.env
     ports:
       - "8080:8080"
+    networks:
+      - develop-environment
     depends_on:
-      - db
+      - database
+
   database:
     image: mariadb:10.5
     container_name: mariadb
     restart: always
     ports:
       - "3306:3306"
-    env_file: .env
+    networks:
+      - develop-environment
+    env_file: back-end.donas.env
     environment:
       TZ: Asia/Seoul
     volumes:
@@ -23,3 +31,19 @@ services:
       - ./db/config:/etc/mysql/conf.d
       - ./db/init:/docker-entrypoint-initdb.d
     command: ["mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_general_ci"]
+
+  dbconsole:
+    container_name: phpmyadmin
+    image: phpmyadmin:5.1.1
+    links:
+      - "database:db"
+    ports:
+      - "23306:80"
+    depends_on:
+      - database
+    networks:
+      - develop-environment
+
+networks:
+  develop-environment:
+    name: develop-environment

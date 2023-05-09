@@ -38,6 +38,6 @@ out/
 
 application-*.yml
 docker-compose-*.yml
-.env
+back-end.donas.env
 /db
 **/generated
