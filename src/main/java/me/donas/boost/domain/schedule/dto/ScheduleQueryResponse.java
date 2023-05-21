@@ -18,6 +18,7 @@ public class ScheduleQueryResponse {
 	private String profileImage;
 	private PlatformProvider provider;
 	private String broadcastLink;
+	private Long scheduleId;
 	private String title;
 	private String bannerImage;
 	private String description;
@@ -25,11 +26,12 @@ public class ScheduleQueryResponse {
 
 	@QueryProjection
 	public ScheduleQueryResponse(String creatorName, String profileImage, PlatformProvider provider,
-		String broadcastLink, String title, String bannerImage, String description, LocalDateTime scheduledTime) {
+		String broadcastLink, Long scheduleId, String title, String bannerImage, String description, LocalDateTime scheduledTime) {
 		this.creatorName = creatorName;
 		this.profileImage = profileImage;
 		this.provider = provider;
 		this.broadcastLink = broadcastLink;
+		this.scheduleId = scheduleId;
 		this.title = title;
 		this.bannerImage = bannerImage;
 		this.description = description;
