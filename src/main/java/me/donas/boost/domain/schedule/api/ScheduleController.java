@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import me.donas.boost.domain.schedule.application.ScheduleService;
 import me.donas.boost.domain.schedule.domain.PlatformProvider;
