@@ -3,10 +3,8 @@ package me.donas.boost.domain.schedule.application;
 import static me.donas.boost.domain.schedule.exception.CreatorInfoErrorCode.*;
 import static me.donas.boost.domain.schedule.exception.ScheduleErrorCode.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.zone.ZoneOffsetTransition;
@@ -70,13 +68,11 @@ public class ScheduleService {
 	@Transactional(readOnly = true)
 	public SchedulesTotalResponse readSchedules(ZonedDateTime time, int day, PlatformProvider provider, int page,
 		int size) {
-		LocalDateTime date = LocalDateTime.of(time.toLocalDate(), LocalTime.MIDNIGHT);
-		String timeOffsetId = time.getOffset().getId();
-		ZoneOffsetTransition transition = ZoneOffsetTransition.of(date, ZoneOffset.of(timeOffsetId), ZoneOffset.UTC);
-		LocalDateTime start = transition.getDateTimeAfter();
-		LocalDateTime end = start.plusDays(1).minusMinutes(1);
+		SearchBetweenTime searchBetweenTime = convertTime(time);
 
-		List<ScheduleQueryResponse> schedules = scheduleQueryRepository.findAllByScheduledTimeBetween(day, start, end);
+		List<ScheduleQueryResponse> schedules = scheduleQueryRepository
+			.findAllByScheduledTimeBetweenAndPlatformProvider(day, searchBetweenTime, provider);
+
 		if (PlatformProvider.TOTAL.equals(provider)) {
 			return organizeByTotal(page, size, time.withZoneSameInstant(ZoneOffset.UTC), schedules);
 		} else {
@@ -113,6 +109,15 @@ public class ScheduleService {
 		converter.put(provider,
 			ScheduleQueryResponses.of(1, 1, schedules.stream().filter(r -> r.getProvider().equals(provider)).toList()));
 		return SchedulesTotalResponse.of(converter);
+	}
+
+	private SearchBetweenTime convertTime(ZonedDateTime now) {
+		LocalDateTime date = LocalDateTime.of(now.toLocalDate(), LocalTime.MIDNIGHT);
+		String timeOffsetId = now.getOffset().getId();
+		ZoneOffsetTransition transition = ZoneOffsetTransition.of(date, ZoneOffset.of(timeOffsetId), ZoneOffset.UTC);
+		LocalDateTime start = transition.getDateTimeAfter();
+		LocalDateTime end = start.plusDays(1).minusMinutes(1);
+		return new SearchBetweenTime(start, end);
 	}
 
 	@Transactional
