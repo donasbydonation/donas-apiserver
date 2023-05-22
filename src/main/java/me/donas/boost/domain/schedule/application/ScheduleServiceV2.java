@@ -6,6 +6,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.zone.ZoneOffsetTransition;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +22,6 @@ import me.donas.boost.domain.schedule.dto.PlatformResultResponse;
 import me.donas.boost.domain.schedule.dto.ScheduleQueryResponse;
 import me.donas.boost.domain.schedule.dto.ScheduleResultResponse;
 import me.donas.boost.domain.schedule.dto.ScheduleResultResponses;
-import me.donas.boost.domain.schedule.dto.SchedulesTotalResponse;
 import me.donas.boost.domain.schedule.repository.ScheduleQueryRepository;
 
 @Service
@@ -35,7 +35,7 @@ public class ScheduleServiceV2 {
 		SearchBetweenTime searchBetweenTime = convertTime(now);
 
 		List<ScheduleQueryResponse> schedules = scheduleQueryRepository
-			.findAllByScheduledTimeBetweenAndPlatformProvider(day, searchBetweenTime, provider);
+			.findAllByScheduledTimeBetweenAndPlatformProvider(day, searchBetweenTime, PlatformProvider.TOTAL);
 
 		return extractResult(now.withZoneSameInstant(ZoneOffset.UTC), provider, page, size, schedules);
 	}
@@ -62,11 +62,13 @@ public class ScheduleServiceV2 {
 		}
 		int totalPage = (int)Math.ceil((double)totalSize / size);
 		int recommendPage = (beforeCount == totalSize) ? totalPage : (int)Math.ceil((beforeCount + 1.0) / size);
+		int nowPage = (page == -1) ? recommendPage : page + 1;
 		if (totalPage == 0) {
-			return new ScheduleResultResponses(0, 0, new ArrayList<>());
+			return ScheduleResultResponses.empty();
 		}
-		return new ScheduleResultResponses(totalPage, recommendPage, result.values()
+		return new ScheduleResultResponses(totalPage, recommendPage, nowPage, result.values()
 			.stream()
+			.sorted(Comparator.comparing(ScheduleResultResponse::scheduledTime))
 			.skip((page == -1) ? (recommendPage - 1L) * size : (long)page * size)
 			.limit(size)
 			.toList()
