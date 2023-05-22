@@ -6,9 +6,10 @@ import java.util.List;
 public record ScheduleResultResponses(
 	int totalPage,
 	int recommendPage,
+	int nowPage,
 	List<ScheduleResultResponse> schedules
 ) {
 	public static ScheduleResultResponses empty() {
-		return new ScheduleResultResponses(0, 0, new ArrayList<>());
+		return new ScheduleResultResponses(0, 0, 0, new ArrayList<>());
 	}
 }
