@@ -74,6 +74,7 @@ public class QueryDslTest {
 					creatorInfo.profileImage,
 					platform.provider,
 					platform.broadcastLink,
+					schedule.id,
 					schedule.title,
 					schedule.bannerImage,
 					schedule.description,
