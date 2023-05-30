@@ -23,7 +23,7 @@ services:
       - "3306:3306"
     networks:
       - develop-environment
-    env_file: back-end.donas.env
+    env_file: .env
     environment:
       TZ: Asia/Seoul
     volumes:
