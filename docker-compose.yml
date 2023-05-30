@@ -3,11 +3,11 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    image: ghcr.io/donasbydonation/back-end:${HOSTNAME}
+    image: ghcr.io/donasbydonation/back-end:local
     platform: linux/amd64
-    container_name: apiserver
+    container_name: back-end
     restart: always
-    env_file: back-end.donas.env
+    env_file: .env
     ports:
       - "8080:8080"
     networks:
