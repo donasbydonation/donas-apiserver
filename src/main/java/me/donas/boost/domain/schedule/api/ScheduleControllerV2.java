@@ -1,10 +1,12 @@
 package me.donas.boost.domain.schedule.api;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +34,6 @@ import me.donas.boost.domain.schedule.domain.PlatformProvider;
 import me.donas.boost.domain.schedule.dto.ScheduleRequest;
 import me.donas.boost.domain.schedule.dto.ScheduleResultResponses;
 import me.donas.boost.global.exception.CommonErrorCode;
-import me.donas.boost.global.exception.ErrorCode;
 import me.donas.boost.global.exception.FileException;
 
 @RestController
@@ -64,7 +65,7 @@ public class ScheduleControllerV2 {
 		}
 		Workbook workbook = new XSSFWorkbook(file.getInputStream());
 
-		Sheet worksheet = workbook.getSheetAt(0);
+		Sheet worksheet = workbook.getSheetAt(3);
 		List<ScheduleRequest> scheduleRequests = new ArrayList<>();
 		for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
 			Row row = worksheet.getRow(i);
@@ -81,22 +82,19 @@ public class ScheduleControllerV2 {
 		Long creatorId = (long)row.getCell(0).getNumericCellValue();
 		String title = row.getCell(1).getStringCellValue();
 		String description = row.getCell(2).getStringCellValue();
-		ZonedDateTime scheduledTime = createdScheduleTime(row.getCell(3).getStringCellValue(),
-			row.getCell(4).getStringCellValue());
+		ZonedDateTime scheduledTime = createdScheduleTime(
+			(int)row.getCell(3).getNumericCellValue(),
+			(int)row.getCell(4).getNumericCellValue()
+		);
 		return new ScheduleRequest(creatorId, title, description, scheduledTime);
 	}
 
-	private ZonedDateTime createdScheduleTime(String date, String time) {
-		String dateTimeString = date + "T" + time;
-		LocalDateTime localDateTime = LocalDateTime.parse(dateTimeString);
-		return ZonedDateTime.of(localDateTime, ZoneId.of("Asia/Seoul"))
-			.withZoneSameInstant(ZoneId.of("UTC"));
-	}
+	private ZonedDateTime createdScheduleTime(int date, int time) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+		StringBuilder dateTime = new StringBuilder(String.format("%08d ", date))
+			.append(String.format("%04d", time));
+		LocalDateTime localDateTime = LocalDateTime.parse(dateTime, formatter);
 
-	private ZonedDateTime createdScheduleTime(LocalDateTime date, LocalDateTime time) {
-		LocalDateTime localDateTime = date.plusHours(time.getHour())
-			.plusMinutes(time.getMinute())
-			.plusSeconds(time.getSecond());
 		return ZonedDateTime.of(localDateTime, ZoneId.of("Asia/Seoul"))
 			.withZoneSameInstant(ZoneId.of("UTC"));
 	}
