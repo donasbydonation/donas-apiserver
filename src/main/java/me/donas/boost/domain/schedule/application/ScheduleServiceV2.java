@@ -1,5 +1,8 @@
 package me.donas.boost.domain.schedule.application;
 
+import static me.donas.boost.domain.schedule.exception.CreatorInfoErrorCode.*;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
@@ -13,21 +16,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+import me.donas.boost.domain.schedule.domain.CreatorInfo;
 import me.donas.boost.domain.schedule.domain.PlatformProvider;
+import me.donas.boost.domain.schedule.domain.Schedule;
 import me.donas.boost.domain.schedule.dto.PlatformResultResponse;
 import me.donas.boost.domain.schedule.dto.ScheduleQueryResponse;
+import me.donas.boost.domain.schedule.dto.ScheduleRequest;
 import me.donas.boost.domain.schedule.dto.ScheduleResultResponse;
 import me.donas.boost.domain.schedule.dto.ScheduleResultResponses;
+import me.donas.boost.domain.schedule.exception.CreatorInfoException;
+import me.donas.boost.domain.schedule.repository.CreatorInfoRepository;
 import me.donas.boost.domain.schedule.repository.ScheduleQueryRepository;
+import me.donas.boost.domain.schedule.repository.ScheduleRepository;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleServiceV2 {
 	private final ScheduleQueryRepository scheduleQueryRepository;
+	private final ScheduleRepository scheduleRepository;
+	private final CreatorInfoRepository creatorInfoRepository;
 
 	@Transactional(readOnly = true)
 	public ScheduleResultResponses readSchedules(ZonedDateTime now, int day, PlatformProvider provider, int page,
@@ -105,4 +122,14 @@ public class ScheduleServiceV2 {
 		return new SearchBetweenTime(start, end);
 	}
 
+	@Transactional
+	public void createSchedule(List<ScheduleRequest> requests) {
+		List<Schedule> schedules = new ArrayList<>();
+		for (ScheduleRequest request : requests) {
+			CreatorInfo creatorInfo = creatorInfoRepository.findById(request.creatorId())
+				.orElseThrow(() -> new CreatorInfoException(NOT_FOUND_CREATOR_INFO));
+			schedules.add(request.toEntity(creatorInfo, ""));
+		}
+		scheduleRepository.saveAll(schedules);
+	}
 }
