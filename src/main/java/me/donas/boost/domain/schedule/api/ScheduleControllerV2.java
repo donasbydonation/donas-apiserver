@@ -1,18 +1,39 @@
 package me.donas.boost.domain.schedule.api;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import me.donas.boost.domain.schedule.application.ScheduleServiceV2;
 import me.donas.boost.domain.schedule.domain.PlatformProvider;
+import me.donas.boost.domain.schedule.dto.ScheduleRequest;
 import me.donas.boost.domain.schedule.dto.ScheduleResultResponses;
+import me.donas.boost.global.exception.CommonErrorCode;
+import me.donas.boost.global.exception.ErrorCode;
+import me.donas.boost.global.exception.FileException;
 
 @RestController
 @RequestMapping("/api/v2")
@@ -29,5 +50,54 @@ public class ScheduleControllerV2 {
 		@RequestParam(defaultValue = "15") int size
 	) {
 		return ResponseEntity.ok(scheduleService.readSchedules(time, day, provider, page, size));
+	}
+
+	@PostMapping("/schedules/excel")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<Long> updateSchedule(
+		@RequestPart(value = "excel") MultipartFile file
+	) throws IOException {
+		String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+
+		if (!"xlsx".equals(extension)) {
+			throw new FileException(CommonErrorCode.INVALID_FILE_TYPE);
+		}
+		Workbook workbook = new XSSFWorkbook(file.getInputStream());
+
+		Sheet worksheet = workbook.getSheetAt(0);
+		List<ScheduleRequest> scheduleRequests = new ArrayList<>();
+		for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
+			Row row = worksheet.getRow(i);
+			if (row.getCell(0) == null) {
+				break;
+			}
+			scheduleRequests.add(extractScheduleInformation(row));
+		}
+		scheduleService.createSchedule(scheduleRequests);
+		return ResponseEntity.ok().build();
+	}
+
+	private ScheduleRequest extractScheduleInformation(Row row) {
+		Long creatorId = (long)row.getCell(0).getNumericCellValue();
+		String title = row.getCell(1).getStringCellValue();
+		String description = row.getCell(2).getStringCellValue();
+		ZonedDateTime scheduledTime = createdScheduleTime(row.getCell(3).getStringCellValue(),
+			row.getCell(4).getStringCellValue());
+		return new ScheduleRequest(creatorId, title, description, scheduledTime);
+	}
+
+	private ZonedDateTime createdScheduleTime(String date, String time) {
+		String dateTimeString = date + "T" + time;
+		LocalDateTime localDateTime = LocalDateTime.parse(dateTimeString);
+		return ZonedDateTime.of(localDateTime, ZoneId.of("Asia/Seoul"))
+			.withZoneSameInstant(ZoneId.of("UTC"));
+	}
+
+	private ZonedDateTime createdScheduleTime(LocalDateTime date, LocalDateTime time) {
+		LocalDateTime localDateTime = date.plusHours(time.getHour())
+			.plusMinutes(time.getMinute())
+			.plusSeconds(time.getSecond());
+		return ZonedDateTime.of(localDateTime, ZoneId.of("Asia/Seoul"))
+			.withZoneSameInstant(ZoneId.of("UTC"));
 	}
 }
