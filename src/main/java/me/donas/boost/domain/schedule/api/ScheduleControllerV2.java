@@ -65,12 +65,15 @@ public class ScheduleControllerV2 {
 		}
 		Workbook workbook = new XSSFWorkbook(file.getInputStream());
 
-		Sheet worksheet = workbook.getSheetAt(3);
+		Sheet worksheet = workbook.getSheetAt(0);
 		List<ScheduleRequest> scheduleRequests = new ArrayList<>();
 		for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
 			Row row = worksheet.getRow(i);
 			if (row.getCell(0) == null) {
 				break;
+			}
+			if (row.getCell(5) != null) {
+				continue;
 			}
 			scheduleRequests.add(extractScheduleInformation(row));
 		}
