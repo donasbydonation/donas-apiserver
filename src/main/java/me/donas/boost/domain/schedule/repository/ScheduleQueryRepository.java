@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -58,6 +57,7 @@ public class ScheduleQueryRepository {
 	}
 
 	private BooleanExpression platformProviderEq(PlatformProvider provider) {
-		return (PlatformProvider.TOTAL.equals(provider)) ? null : QPlatform.platform.provider.eq(provider);
+		return (PlatformProvider.TOTAL.equals(provider)) ? QPlatform.platform.broadcastLink.isNotEmpty() : QPlatform.platform.provider.eq(provider)
+			.and(QPlatform.platform.broadcastLink.isNotEmpty());
 	}
 }
