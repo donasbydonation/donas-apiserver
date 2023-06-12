@@ -31,6 +31,7 @@ public class ScheduleQueryRepository {
 		LocalDateTime end = searchBetweenTime.end();
 
 		return queryFactory.select(new QScheduleQueryResponse(
+				creatorInfo.id,
 				creatorInfo.name,
 				creatorInfo.profileImage,
 				platform.provider,
