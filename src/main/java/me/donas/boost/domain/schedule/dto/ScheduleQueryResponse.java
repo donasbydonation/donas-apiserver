@@ -2,7 +2,6 @@ package me.donas.boost.domain.schedule.dto;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 import com.querydsl.core.annotations.QueryProjection;
@@ -14,6 +13,7 @@ import me.donas.boost.domain.schedule.domain.PlatformProvider;
 @Getter
 @NoArgsConstructor
 public class ScheduleQueryResponse {
+	private Long creatorId;
 	private String creatorName;
 	private String profileImage;
 	private PlatformProvider provider;
@@ -25,8 +25,9 @@ public class ScheduleQueryResponse {
 	private ZonedDateTime scheduledTime;
 
 	@QueryProjection
-	public ScheduleQueryResponse(String creatorName, String profileImage, PlatformProvider provider,
+	public ScheduleQueryResponse(Long creatorId, String creatorName, String profileImage, PlatformProvider provider,
 		String broadcastLink, Long scheduleId, String title, String bannerImage, String description, LocalDateTime scheduledTime) {
+		this.creatorId = creatorId;
 		this.creatorName = creatorName;
 		this.profileImage = profileImage;
 		this.provider = provider;
