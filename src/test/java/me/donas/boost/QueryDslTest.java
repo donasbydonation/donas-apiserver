@@ -70,6 +70,7 @@ public class QueryDslTest {
 
 		List<ScheduleQueryResponse> result = queryFactory.select(
 				new QScheduleQueryResponse(
+					creatorInfo.id,
 					creatorInfo.name,
 					creatorInfo.profileImage,
 					platform.provider,
