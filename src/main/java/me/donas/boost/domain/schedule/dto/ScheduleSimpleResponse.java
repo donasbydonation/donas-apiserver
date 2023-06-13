@@ -1,6 +1,7 @@
 package me.donas.boost.domain.schedule.dto;
 
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import me.donas.boost.domain.schedule.domain.Schedule;
 
@@ -9,7 +10,7 @@ public record ScheduleSimpleResponse(
 	String title,
 	String bannerImage,
 	String description,
-	LocalDateTime scheduledTime
+	ZonedDateTime scheduledTime
 ) {
 	public static ScheduleSimpleResponse of(Schedule schedule) {
 		return new ScheduleSimpleResponse(
@@ -17,7 +18,7 @@ public record ScheduleSimpleResponse(
 			schedule.getTitle(),
 			schedule.getBannerImage(),
 			schedule.getDescription(),
-			schedule.getScheduledTime()
+			schedule.getScheduledTime().atZone(ZoneId.of("UTC"))
 		);
 	}
 }
